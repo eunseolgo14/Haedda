@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&family=Noto+Sans+KR:wght@100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+:root {
+  --background: #fffef7;
+  --white: #ffffff;
+  --lyellow: #ffdcbe;
+
+  --brown: #632306;
+  --lbrown: #c26d44;
+  --scroll: #ae836f;
+  --sblue: #e3f1fb;
+  --blue: #91c1e4;
+  --navy: #005393;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  font-family: 'Noto Sans KR', 'Nunito', 'Noto Sans KR', sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+.scrollable_element {
+  height: 300px;
+  overflow-y: auto;
+  scrollbar-color: var(--scroll) var(--background);
+}
+
+.scrollable_element::-webkit-scrollbar {
+  width: 12px;
+}
+.scrollable_element::-webkit-scrollbar-track {
+  background: var(--scroll);
+}
+.scrollable_element::-webkit-scrollbar-thumb {
+  background-color: var(--scroll);
+  border-radius: 4px;
+}
+.scrollable_element::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll);
+}
+

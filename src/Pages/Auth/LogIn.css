@@ -1,0 +1,115 @@
+.login_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.login_logo {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login_logo img {
+  width: 30%;
+  max-width: 200px;
+  min-width: 140px;
+  margin-bottom: 2rem;
+}
+
+.input_group {
+  justify-content: center;
+}
+
+.input_field {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.input_field input {
+  width: 280px;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--lbrown);
+  border-radius: 10px;
+  font-size: 18px;
+  margin-bottom: 0.75rem;
+}
+
+.input_field label {
+  position: absolute;
+  top: 0.5rem;
+  left: 1rem;
+  font-size: 14px;
+  color: var(--lbrown);
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+
+.links a {
+  color: var(--brown);
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.login_btn {
+  cursor: pointer;
+  border-radius: 50px;
+  padding: 0.5rem 3rem;
+  border: 1px solid var(--brown);
+  background-color: var(--lbrown);
+  color: white;
+  font-size: 14px;
+  margin-top: 2rem;
+  font-weight: bold;
+}
+
+/* 태블릿 대응 */
+@media (max-width: 1024px) {
+  .input_field input {
+    width: 230px;
+    font-size: 18px;
+    padding: 0.5rem 1.5rem;
+  }
+
+  .links a {
+    font-size: 16px;
+  }
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .input_field input {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .login_logo img {
+    width: 30%;
+  }
+
+  .links a {
+    font-size: 14px;
+  }
+
+  .login_btn {
+    /* width: 100%; */
+    padding: 0.5rem 3rem;
+  }
+
+  .login_container {
+    padding: 2rem 1rem;
+  }
+}

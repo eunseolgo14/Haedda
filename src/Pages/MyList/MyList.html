@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My List</title>
+
+    <!-- 공용 CSS -->
+    <link rel="stylesheet" href="../../Assets/Css/Common.css" />
+
+    <!-- 페이지 전용 CSS -->
+    <link rel="stylesheet" href="MyList.css" />
+    <link rel="stylesheet" href="ListSidebar.css" />
+
+    <!-- 공용 JS -->
+    <script src="../../Assets/Scripts/Common.js"></script>
+</head>
+
+<body>
+    <div class="mylist_container">
+        <!-- 🟦 사이드바 -->
+        <div id="sidebar"></div>
+
+        <!-- 🟩 메인 콘텐츠 -->
+        <div class="content_area">
+            <div class="checkered_bg"></div>
+
+            <!-- 리스트+디테일 수평 배치 -->
+            <div class="list-and-detail-wrap">
+
+                <!-- 리스트 헤더 + 태스크 리스트 수직 배치 -->
+                <div class="list_block">
+
+                    <div class="list_header">
+                        <div class="list_title">
+                            <h2>NEW LIST<br>MAX LENGTH TWO</h2>
+                        </div>
+                        <div class="list_btn_controls">
+                            <select class="status_filter">
+                                <option>IN-PROGRESS</option>
+                                <option>DONE</option>
+                                <option>PASS</option>
+                            </select>
+                            <button class="list_star_btn">★</button>
+                            <button class="list_menu_btn">≡</button>
+                        </div>
+                    </div>
+
+                    <div class="task-list scrollable_element"></div>
+                </div>
+
+                <!-- 디테일 패널 -->
+                <div class="task_detail_panel hidden">
+                    <div class="task_detail_header">
+                        <div class="task_title">TASK NAME HERE</div>
+                        <button class="close-btn">×</button>
+                    </div>
+                    <div class="task_detail_body">
+                        <div class="task_detial_category"><b>Category:</b> STUDY</div>
+                        <div class="task_detial_deadline"><b>Deadline:</b> 2025.12.31</div>
+                        <div class="task_detial_status"><b>Status:</b> TO DO</div>
+                        <div class="task_detial_description">
+                            <b>Description:</b>
+                            <p></p>
+                        </div>
+                        <div class="task_detial_comment">
+                            <p>This could be their specific plans on a task, or feelings towards it.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ✅ 팝업: 리스트 생성 -->
+            <div class="popup create-list-popup hidden">
+                <h3>Your list name is...</h3>
+                <textarea placeholder="Type your list name here."></textarea>
+                <button class="btn create-list-btn">CREATE</button>
+                <button class="close-btn">×</button>
+            </div>
+
+            <!-- ✅ 팝업: 태스크 추가 -->
+            <div class="popup add-task-popup hidden">
+                <h3>Add new task to <span class="list-name">New List</span></h3>
+                <textarea placeholder="Write your task here."></textarea>
+                <div class="task-meta">
+                    <div><b>Category:</b> <span>STUDY</span></div>
+                    <div><b>Deadline:</b> <span>NONE</span></div>
+                    <div><b>Status:</b> <span>TO DO</span></div>
+                </div>
+                <button class="btn add-task-btn">ADD</button>
+                <button class="close-btn">×</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 페이지 전용 JS -->
+    <script type="module" src="MyList.js"></script>
+</body>
+
+</html>

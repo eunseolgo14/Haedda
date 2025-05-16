@@ -114,7 +114,7 @@ export function DeleteTask(taskId) {
 
 // 특정 아이디의 태스크 가져오기 함수.
 export function GetTaskById(taskId) {
-    return TaskData.filter(t => t.id === taskId);
+    return TaskData.find(t => t.id === taskId);
 }
 // 특정 아이디의 "리스트의" 태스크들 가져오기 함수.
 export function GetTasksByListId(listId) {

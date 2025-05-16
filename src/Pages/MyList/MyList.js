@@ -1,4 +1,7 @@
-import { TaskData, TodoListData, SaveDataToLocalStorage, LoadDataFromLocalStorage, GetTasksByListId, GetListById, UpdateTask }
+import {
+    TaskData, TodoListData, SaveDataToLocalStorage, LoadDataFromLocalStorage,
+    GetTasksByListId, GetListById, GetTaskById, UpdateTask
+}
     from '../../Assets/Scripts/TaskManager.js';
 
 let selectedListId = 0;
@@ -203,7 +206,7 @@ function RenderTaskCards(taskArray) {
             detailComment.innerHTML = `<span>No comments yet.</span>`;
         }
 
-       
+
         detailPanel.querySelector('.detail_edit_btn').addEventListener('click', (e) => {
             e.stopPropagation();
             ClickTaskMenu();
@@ -276,11 +279,103 @@ function RenderTaskCards(taskArray) {
     }
 
     function ClickTaskMenu() {
-        const selectBox = document.querySelector('.custom_select_options');
-        selectBox.classList.toggle('hidden');
+        const menu = document.querySelector('.custom_select_options');
+        menu.classList.toggle('hidden');
+
+        menu.querySelector('[data-value="edit"]').addEventListener('click', () => {
+            EditTaskDetail(openTaskId);
+            menu.classList.add('hidden');
+        });
     }
 
     function ClickListMenu() {
 
+    }
+
+
+    function EditTaskDetail(taskId) {
+        const taskData = GetTaskById(taskId);
+        if (!taskData) return;
+
+        // comment가 빈 경우 빈 배열로 초기화.
+        taskData.comment = Array.isArray(taskData.comment) ? taskData.comment : [];
+
+        const detailPanel = document.querySelector('.task_detail_panel');
+
+        detailPanel.innerHTML = `
+            <div class="task_detail_header">
+                <input type="text" class="edit_title_input" value="${taskData.title}">
+            </div>
+            <div class="task_detail_body">
+                <div class="task_detail_category"><b>Category:</b> <input class="edit_category_input" value="${taskData.category || ''}"></div>
+                <div class="task_detail_deadline"><b>Deadline:</b> <input type="date" class="edit_deadline_input" value="${taskData.due_date || ''}"></div>
+                <div class="task_detail_status"><b>Status:</b> 
+                    <select class="edit_status_input">
+                        <option ${taskData.status === 'TO DO' ? 'selected' : ''}>TO DO</option>
+                        <option ${taskData.status === 'IN PROGRESS' ? 'selected' : ''}>IN PROGRESS</option>
+                        <option ${taskData.status === 'PASS' ? 'selected' : ''}>PASS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="task_detail_description "><b>Description:</b> <textarea class="edit_description_input scrollable_element">${taskData.description || ''}</textarea></div>
+
+            <div class="task_detail_comment scrollable_element">
+                <p class="comment_guide"><b>⁕ My Comment</b></p>
+                <div class="task_comment_edit_area">
+                ${taskData.comment.map((comment_item, idx) => `
+                    <div class="comment_row">
+                    <textarea value="${comment_item}" data-index="${idx}" class="comment_input scrollable_element">${comment_item}</textarea>
+                    <button class="delete_comment_btn" data-index="${idx}">×</button>
+                    </div>
+                `).join('')}
+                </div>
+                <div class="comment_add_area">
+                <textarea class="new_comment_input" placeholder="새 댓글 입력..." /></textarea>
+                <button class="add_comment_btn">+</button>
+                </div>
+            </div>
+            <button class="detail_save_btn">✔ 저장</button>
+            </div>
+        `;
+
+        // 🧩 저장 버튼 이벤트
+        detailPanel.querySelector('.detail_save_btn').addEventListener('click', () => {
+            const updates = {
+                title: detailPanel.querySelector('.edit_title_input').value.trim(),
+                category: detailPanel.querySelector('.edit_category_input').value.trim(),
+                due_date: detailPanel.querySelector('.edit_deadline_input').value,
+                status: detailPanel.querySelector('.edit_status_input').value,
+                description: detailPanel.querySelector('.edit_description_input').value.trim(),
+                comment: [...detailPanel.querySelectorAll('.comment_input')].map(input => input.value.trim())
+            };
+
+            RequestUpdateTask(taskId, updates);  // 💾 저장
+            OpenTaskDetail(GetTaskById(taskId)); // 🔄 다시 읽기 (수정모드 종료)
+        });
+
+        // ❌ 댓글 삭제 버튼 이벤트
+        detailPanel.querySelectorAll('.delete_comment_btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.index);
+                taskData.comment.splice(idx, 1);
+                EditTaskDetail(taskId); // 🔁 갱신
+            });
+        });
+
+        // ➕ 댓글 추가
+        detailPanel.querySelector('.add_comment_btn').addEventListener('click', () => {
+            const newCommentInput = detailPanel.querySelector('.new_comment_input');
+            const newComment = newCommentInput.value.trim();
+            if (newComment !== '') {
+                taskData.comment.push(newComment);
+                newCommentInput.value = '';
+                EditTaskDetail(taskId); // 🔁 갱신
+            }
+        });
+
+        // // ❎ 닫기
+        // detailPanel.querySelector('.detail_close_btn').addEventListener('click', () => {
+        //     CloseTaskDetail();
+        // });
     }
 }

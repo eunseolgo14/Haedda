@@ -26,20 +26,33 @@ body {
 .scrollable_element {
   height: 300px;
   overflow-y: auto;
-  scrollbar-color: var(--scroll) var(--background);
+  scrollbar-color: var(--scroll) transparent;
 }
 
 .scrollable_element::-webkit-scrollbar {
   width: 12px;
 }
+
 .scrollable_element::-webkit-scrollbar-track {
   background: var(--scroll);
 }
+
 .scrollable_element::-webkit-scrollbar-thumb {
   background-color: var(--scroll);
   border-radius: 4px;
 }
+
 .scrollable_element::-webkit-scrollbar-thumb:hover {
   background-color: var(--scroll);
 }
 
+textarea {
+  resize: none;
+  overflow: hidden;
+  background-color: #ffffff;
+  padding: 2% 3%;
+  border-radius: 5px;
+  color: var(--navy);
+  font-family: 'Noto Sans KR', 'Nunito',
+    'Noto Sans KR', sans-serif;
+}

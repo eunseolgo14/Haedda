@@ -43,6 +43,7 @@
   margin-bottom: 2rem;
   color: var(--brown);
   width: 80%;
+
 }
 
 .task-list {
@@ -216,7 +217,6 @@
   overflow-y: auto;
   height: 300px;
   border-radius: 5px;
-  margin-top: 2rem;
 }
 
 .task_comment span {
@@ -328,4 +328,110 @@
   width: 100%;
   height: 1px;
   background-color: var(--blue);
+}
+
+.edit_title_input {
+  width: 100%;
+  font-size: 16px;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid var(--blue);
+  border-radius: 5px;
+  color: var(--navy);
+  font-weight: bold;
+}
+
+.edit_category_input,
+.edit_deadline_input,
+.edit_status_input {
+  font-size: 12px;
+  padding: 0.2rem 0.5rem;
+  background-color: #ffffff;
+  border: 1px solid var(--blue);
+  border-radius: 5px;
+  color: var(--navy);
+  font-family: 'Noto Sans KR', 'Nunito',
+    'Noto Sans KR', sans-serif;
+}
+
+
+.comment_row,
+.comment_add_area {
+  display: flex;
+  flex-flow: row;
+  gap: 5px;
+  margin-bottom: 0.5rem;
+}
+
+.delete_comment_btn {
+  width: 25px;
+  height: 25px;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--navy);
+  font-weight: bold;
+  margin-top: 0.7rem;
+}
+
+.add_comment_btn {
+  width: 25px;
+  height: 25px;
+  padding: 0 8px;
+  font-size: 13px;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--lbrown);
+  font-weight: bold;
+  margin-top: 0.7rem;
+}
+
+.comment_input {
+  font-size: 12px;
+  width: 94%;
+  height: 40px;
+  border: 1px solid var(--blue);
+
+}
+
+.new_comment_input {
+  font-size: 12px;
+  width: 94%;
+  height: 40px;
+  border: 1px solid var(--lbrown);
+    color: var(--brown);
+
+}
+
+.edit_description_input {
+  width: 94%;
+  height: 60px;
+  font-size: 12px;
+  border: 1px solid var(--blue);
+  margin-top: 0.5rem;
+}
+
+.edit_description_input:focus,
+.comment_input:focus {
+  outline: none;
+  border: 1px solid var(--navy);
+}
+
+.new_comment_input:focus{
+  outline: none;
+  border: 1px solid var(--brown);
+}
+
+.detail_save_btn{
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  background-color: #70b4e5;
+  font-weight: bold;
+  margin-top: 1rem;
 }

@@ -5,8 +5,8 @@
   --background: #fffef7;
   --white: #ffffff;
   --lyellow: #ffdcbe;
-
   --brown: #632306;
+  --rbrown: #770501;
   --lbrown: #c26d44;
   --scroll: #ae836f;
   --sblue: #e3f1fb;
@@ -56,3 +56,100 @@ textarea {
   font-family: 'Noto Sans KR', 'Nunito',
     'Noto Sans KR', sans-serif;
 }
+
+/* [MODAL_POPUP_CSS] */
+/* #region */ 
+
+.modal_overlay {
+  position: absolute;
+  /* fixed → absolute */
+  inset: 0;
+  z-index: 9999;
+  background: rgba(37, 20, 4, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.modal_window {
+  margin: 0;
+  padding: 0rem;
+  background: #fffef7;
+  border: 1px solid var(--lyellow);
+  border-radius: 10px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  font-family: 'Noto Sans KR', sans-serif;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal_window h3 {
+  font-size: 18px;
+  margin: 0.7rem;
+  color: var(--lbrown);
+  ;
+}
+
+.modal_window p {
+  font-size: 14px;
+  color: var(--lbrown);
+  margin: 2rem;
+}
+
+.popup_buttons {
+  display: flex;
+  gap: 0.5rem;
+  height: 40px;
+}
+
+.confirm_btn,
+.cancel_btn {
+  flex-grow: 1;
+  padding: 0.6rem 0.8rem;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 40px;
+  background-color: transparent;
+  color: var(--lbrown);;
+}
+
+
+.confirm_btn:hover,
+.cancel_btn:hover {
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  color: var(--brown);
+}
+
+.popup_divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--lyellow);
+}
+
+.popup_divider_btn {
+  width: 1px;
+  height: 100%;
+  background-color: var(--lyellow);
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* #endregion */

@@ -1,8 +1,10 @@
 import {
     TaskData, TodoListData, SaveDataToLocalStorage, LoadDataFromLocalStorage,
-    GetTasksByListId, GetListById, GetTaskById, UpdateTask
+    GetTasksByListId, GetListById, GetTaskById, UpdateTask, DeleteTask
 }
     from '../../Assets/Scripts/TaskManager.js';
+
+import { AlertPopup, ConfirmPopup } from '../../Assets/Scripts/PopupManager.js'
 
 let selectedListId = 0;
 let draggedId = null;
@@ -47,6 +49,7 @@ function RenderMainList(listnode) {
 function RenderTaskCards(taskArray) {
     const taskListContainer = document.querySelector('.task-list');
     taskListContainer.innerHTML = '';
+
 
     //sort_order에 따른 오름차순 정렬.
     const sortedArray = [...taskArray].sort((a, b) => a.sort_order - b.sort_order);
@@ -139,32 +142,35 @@ function RenderTaskCards(taskArray) {
         taskListContainer.appendChild(card);
     });
 
-    function CloseTaskDetail() {
-        openTaskId = 0;
-        const detailPanel = document.querySelector('.task_detail_panel');
 
-        //우측 등장 애니메이션.
-        if (detailPanel.classList.contains('show')) {
-            detailPanel.classList.remove('show');
-            setTimeout(() => {
-                detailPanel.classList.add('hidden');
-            }, 25);
-            return;
-        }
+}
+
+function CloseTaskDetail() {
+    openTaskId = 0;
+    const detailPanel = document.querySelector('.task_detail_panel');
+
+    //우측 등장 애니메이션.
+    if (detailPanel.classList.contains('show')) {
+        detailPanel.classList.remove('show');
+        setTimeout(() => {
+            detailPanel.classList.add('hidden');
+        }, 25);
+        return;
     }
-    //클릭 시 우측 패널 구성 함수.
-    function OpenTaskDetail(taskData) {
+}
+//클릭 시 우측 패널 구성 함수.
+function OpenTaskDetail(taskData, is_forceOpen = false) {
 
-        //같은 태스크 더블태핑 => 탭 닫기.
-        if (openTaskId == taskData.id) {
-            CloseTaskDetail();
-            return;
-        }
-        openTaskId = taskData.id;
-        const detailPanel = document.querySelector('.task_detail_panel');
+    //같은 태스크 더블태핑 + 강제 열기 거짓 => 탭 닫기.
+    if (!is_forceOpen && openTaskId == taskData.id) {
+        CloseTaskDetail();
+        return;
+    }
+    openTaskId = taskData.id;
+    const detailPanel = document.querySelector('.task_detail_panel');
 
 
-        detailPanel.innerHTML = `
+    detailPanel.innerHTML = `
         <div class="task_detail_header">
             <div class="task_title">• ${taskData.title}</div>
             <div class="btn_area">
@@ -194,115 +200,135 @@ function RenderTaskCards(taskArray) {
         </div>
         `;
 
-        //댓글 영역 댓글 노드 동적 구성.
-        const detailComment = detailPanel.querySelector('.task_comment');
-        if (Array.isArray(taskData.comment) && taskData.comment.length > 0) {
-            for (let comment of taskData.comment) {
-                const span = document.createElement('span');
-                span.textContent = comment;
-                detailComment.appendChild(span);
-            }
-        } else {
-            detailComment.innerHTML = `<span>No comments yet.</span>`;
+    //댓글 영역 댓글 노드 동적 구성.
+    const detailComment = detailPanel.querySelector('.task_comment');
+    if (Array.isArray(taskData.comment) && taskData.comment.length > 0) {
+        for (let comment of taskData.comment) {
+            const span = document.createElement('span');
+            span.textContent = comment;
+            detailComment.appendChild(span);
         }
-
-
-        detailPanel.querySelector('.detail_edit_btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            ClickTaskMenu();
-        });
-
-        detailPanel.querySelector('.detail_close_btn').addEventListener('click', () => {
-            CloseTaskDetail();
-        });
-
-        detailPanel.classList.remove('hidden');
-        void detailPanel.offsetWidth;
-        detailPanel.classList.add('show');
+    } else {
+        detailComment.innerHTML = `<span>No comments yet.</span>`;
     }
 
 
+    detailPanel.querySelector('.detail_edit_btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        ClickTaskMenu();
+    });
 
-    //드래그 후 태스크 카드 재정렬 함수.
-    function ReorderTask(fromId, toId) {
-        // 이동할 태스크 ID 추출(몇번 녀석을 몇번으로 보낼건지).
-        const fromIndex = TaskData.findIndex(t => t.id === fromId);
-        const toIndex = TaskData.findIndex(t => t.id === toId);
+    detailPanel.querySelector('.detail_close_btn').addEventListener('click', () => {
+        CloseTaskDetail();
+    });
 
-        if (fromIndex === -1 || toIndex === -1) return;
+    detailPanel.classList.remove('hidden');
+    void detailPanel.offsetWidth;
+    detailPanel.classList.add('show');
+}
 
-        // fromIndex에 있는 테스크 1개를 잘라내어 moved에 저장, 뒷 녀석들 앞으로 댕겨오기.
-        const removedItems = TaskData.splice(fromIndex, 1);
 
-        //주의 =>splice는 배열로 반환, [0]으로 접근해야함.
-        const moved = removedItems[0];
 
-        //위에서 담아둔 moved를 toIndex에 끼워넣기.
-        TaskData.splice(toIndex, 0, moved);
+//드래그 후 태스크 카드 재정렬 함수.
+function ReorderTask(fromId, toId) {
+    // 이동할 태스크 ID 추출(몇번 녀석을 몇번으로 보낼건지).
+    const fromIndex = TaskData.findIndex(t => t.id === fromId);
+    const toIndex = TaskData.findIndex(t => t.id === toId);
 
-        //배열 전체 순서대로 sort_order 값 재설정 (1부터 시작!).
-        TaskData.forEach((task, index) => {
-            task.sort_order = index + 1;
-        });
+    if (fromIndex === -1 || toIndex === -1) return;
 
-        //태스크의 변경사항 업데이트.
-        TaskData.forEach(task => {
-            RequestUpdateTask(task.id, { sort_order: task.sort_order });
-        });
+    // fromIndex에 있는 테스크 1개를 잘라내어 moved에 저장, 뒷 녀석들 앞으로 댕겨오기.
+    const removedItems = TaskData.splice(fromIndex, 1);
 
-        //로컬 스토리지에 저장, 카드 재렌더링.
+    //주의 =>splice는 배열로 반환, [0]으로 접근해야함.
+    const moved = removedItems[0];
+
+    //위에서 담아둔 moved를 toIndex에 끼워넣기.
+    TaskData.splice(toIndex, 0, moved);
+
+    //배열 전체 순서대로 sort_order 값 재설정 (1부터 시작!).
+    TaskData.forEach((task, index) => {
+        task.sort_order = index + 1;
+    });
+
+    //태스크의 변경사항 업데이트.
+    TaskData.forEach(task => {
+        RequestUpdateTask(task.id, { sort_order: task.sort_order });
+    });
+
+    //로컬 스토리지에 저장, 카드 재렌더링.
+    SaveDataToLocalStorage();
+    RenderTaskCards(GetTasksByListId(selectedListId));
+}
+
+
+function RequestUpdateTodoList(listId, updates) {
+    const updated = UpdateTodoList(listId, updates);
+    if (updated) {
         SaveDataToLocalStorage();
-        RenderTaskCards(GetTasksByListId(selectedListId));
+        console.log(`리스트 ${listId} 업데이트 완료:`, updated);
+        RenderMainList(updated); // 선택적으로 리렌더
+    } else {
+        console.warn(`리스트 ${listId}는 발견 안 됨.`);
     }
+}
 
-
-    function RequestUpdateTodoList(listId, updates) {
-        const updated = UpdateTodoList(listId, updates);
-        if (updated) {
-            SaveDataToLocalStorage();
-            console.log(`리스트 ${listId} 업데이트 완료:`, updated);
-            RenderMainList(updated); // 선택적으로 리렌더
-        } else {
-            console.warn(`리스트 ${listId}는 발견 안 됨.`);
-        }
+function RequestUpdateTask(taskId, updates) {
+    const updated = UpdateTask(taskId, updates);
+    if (updated) {
+        SaveDataToLocalStorage();
+        console.log(`태스크 ${taskId} 업데이트 완료:`, updated);
+        RenderTaskCards(GetTasksByListId(selectedListId)); // 선택적으로 다시 그리기
+    } else {
+        console.warn(`태스크 ${taskId}는 발견 안 됨.`);
     }
+}
 
-    function RequestUpdateTask(taskId, updates) {
-        const updated = UpdateTask(taskId, updates);
-        if (updated) {
-            SaveDataToLocalStorage();
-            console.log(`태스크 ${taskId} 업데이트 완료:`, updated);
-            RenderTaskCards(GetTasksByListId(selectedListId)); // 선택적으로 다시 그리기
-        } else {
-            console.warn(`태스크 ${taskId}는 발견 안 됨.`);
-        }
-    }
+function RequestDeleteTask(taskId) {
+    DeleteTask(taskId);                           
+    SaveDataToLocalStorage();                     
+    RenderTaskCards(GetTasksByListId(selectedListId)); 
+    console.log(`태스크 ${taskId} 삭제 완료`);
+}
 
-    function ClickTaskMenu() {
-        const menu = document.querySelector('.custom_select_options');
-        menu.classList.toggle('hidden');
+function ClickTaskMenu() {
+    const menu = document.querySelector('.custom_select_options');
+    menu.classList.toggle('hidden');
 
-        menu.querySelector('[data-value="edit"]').addEventListener('click', () => {
-            EditTaskDetail(openTaskId);
-            menu.classList.add('hidden');
-        });
-    }
-
-    function ClickListMenu() {
-
-    }
+    menu.querySelector('[data-value="edit"]').addEventListener('click', () => {
+        EditTaskDetail(openTaskId);
+        menu.classList.add('hidden');
+    });
 
 
-    function EditTaskDetail(taskId) {
-        const taskData = GetTaskById(taskId);
-        if (!taskData) return;
+    menu.querySelector('[data-value="delete"]').addEventListener('click', () => {
 
-        // comment가 빈 경우 빈 배열로 초기화.
-        taskData.comment = Array.isArray(taskData.comment) ? taskData.comment : [];
+        const title = GetTaskById(openTaskId).title;
+        ConfirmPopup("태스크 삭제", `정말 [${title}] 태스크를 삭제하시겠습니까?`, () => {
+            console.log("삭제 확인");
+            RequestDeleteTask(openTaskId);
+            CloseTaskDetail();
+        }, () => {
+            console.log("삭제 취소");
+        }, document.querySelector('.content_area'));
+    });
+}
 
-        const detailPanel = document.querySelector('.task_detail_panel');
+function ClickListMenu() {
 
-        detailPanel.innerHTML = `
+}
+
+
+function EditTaskDetail(taskId) {
+    const taskData = GetTaskById(taskId);
+    if (!taskData) return;
+
+    // comment가 빈 경우 빈 배열로 초기화.
+    taskData.comment = Array.isArray(taskData.comment) ? taskData.comment : [];
+
+    const detailPanel = document.querySelector('.task_detail_panel');
+
+    detailPanel.innerHTML = `
             <div class="task_detail_header">
                 <input type="text" class="edit_title_input" value="${taskData.title}">
             </div>
@@ -322,60 +348,62 @@ function RenderTaskCards(taskArray) {
             <div class="task_detail_comment scrollable_element">
                 <p class="comment_guide"><b>⁕ My Comment</b></p>
                 <div class="task_comment_edit_area">
-                ${taskData.comment.map((comment_item, idx) => `
-                    <div class="comment_row">
-                    <textarea value="${comment_item}" data-index="${idx}" class="comment_input scrollable_element">${comment_item}</textarea>
-                    <button class="delete_comment_btn" data-index="${idx}">×</button>
-                    </div>
-                `).join('')}
+                    ${taskData.comment.map((comment_item, idx) => `
+                        <div class="comment_row">
+                            <textarea value="${comment_item}" data-index="${idx}" class="comment_input scrollable_element">${comment_item}</textarea>
+                            <button class="delete_comment_btn" data-index="${idx}">×</button>
+                        </div>
+                    `).join('')}
                 </div>
                 <div class="comment_add_area">
-                <textarea class="new_comment_input" placeholder="새 댓글 입력..." /></textarea>
-                <button class="add_comment_btn">+</button>
+                    <textarea class="new_comment_input" placeholder="새 댓글 입력..." ></textarea>
+                    <button class="add_comment_btn">+</button>
                 </div>
             </div>
-            <button class="detail_save_btn">✔ 저장</button>
+            <div class ="edit_button_area">
+            <button class="detail_cancle_btn">취소</button>
+                <button class="detail_save_btn">저장</button>
             </div>
         `;
 
-        // 🧩 저장 버튼 이벤트
-        detailPanel.querySelector('.detail_save_btn').addEventListener('click', () => {
-            const updates = {
-                title: detailPanel.querySelector('.edit_title_input').value.trim(),
-                category: detailPanel.querySelector('.edit_category_input').value.trim(),
-                due_date: detailPanel.querySelector('.edit_deadline_input').value,
-                status: detailPanel.querySelector('.edit_status_input').value,
-                description: detailPanel.querySelector('.edit_description_input').value.trim(),
-                comment: [...detailPanel.querySelectorAll('.comment_input')].map(input => input.value.trim())
-            };
+    // 저장 버튼 이벤트.
+    detailPanel.querySelector('.detail_save_btn').addEventListener('click', () => {
+        const updates = {
+            title: detailPanel.querySelector('.edit_title_input').value.trim(),
+            category: detailPanel.querySelector('.edit_category_input').value.trim(),
+            due_date: detailPanel.querySelector('.edit_deadline_input').value,
+            status: detailPanel.querySelector('.edit_status_input').value,
+            description: detailPanel.querySelector('.edit_description_input').value.trim(),
+            comment: [...detailPanel.querySelectorAll('.comment_input')].map(input => input.value.trim())
+        };
 
-            RequestUpdateTask(taskId, updates);  // 💾 저장
-            OpenTaskDetail(GetTaskById(taskId)); // 🔄 다시 읽기 (수정모드 종료)
+        RequestUpdateTask(taskId, updates);
+        //동일 태스크 패널 열기 => 강제로 열어두기 참.
+        OpenTaskDetail(GetTaskById(taskId), true);
+    });
+
+    // 댓글 삭제 버튼 이벤트.
+    detailPanel.querySelectorAll('.delete_comment_btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.index);
+            taskData.comment.splice(idx, 1);
+            EditTaskDetail(taskId);
         });
+    });
 
-        // ❌ 댓글 삭제 버튼 이벤트
-        detailPanel.querySelectorAll('.delete_comment_btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const idx = parseInt(btn.dataset.index);
-                taskData.comment.splice(idx, 1);
-                EditTaskDetail(taskId); // 🔁 갱신
-            });
-        });
+    // 댓글 추가.
+    detailPanel.querySelector('.add_comment_btn').addEventListener('click', () => {
+        const newCommentInput = detailPanel.querySelector('.new_comment_input');
+        const newComment = newCommentInput.value.trim();
+        if (newComment !== '') {
+            taskData.comment.push(newComment);
+            newCommentInput.value = '';
+            EditTaskDetail(taskId);
+        }
+    });
 
-        // ➕ 댓글 추가
-        detailPanel.querySelector('.add_comment_btn').addEventListener('click', () => {
-            const newCommentInput = detailPanel.querySelector('.new_comment_input');
-            const newComment = newCommentInput.value.trim();
-            if (newComment !== '') {
-                taskData.comment.push(newComment);
-                newCommentInput.value = '';
-                EditTaskDetail(taskId); // 🔁 갱신
-            }
-        });
-
-        // // ❎ 닫기
-        // detailPanel.querySelector('.detail_close_btn').addEventListener('click', () => {
-        //     CloseTaskDetail();
-        // });
-    }
+    // 닫기.
+    detailPanel.querySelector('.detail_cancle_btn').addEventListener('click', () => {
+        OpenTaskDetail(GetTaskById(taskId), true);
+    });
 }

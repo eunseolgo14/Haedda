@@ -10,6 +10,7 @@
   height: 100vh;
   overflow: hidden;
   background-color: var(--background);
+  position: relative;
 }
 
 .list-and-detail-wrap {
@@ -402,7 +403,7 @@
   width: 94%;
   height: 40px;
   border: 1px solid var(--lbrown);
-    color: var(--brown);
+  color: var(--brown);
 
 }
 
@@ -420,18 +421,48 @@
   border: 1px solid var(--navy);
 }
 
-.new_comment_input:focus{
+.new_comment_input:focus {
   outline: none;
   border: 1px solid var(--brown);
 }
 
-.detail_save_btn{
-  padding: 0.5rem 1rem;
-  font-size: 14px;
+.edit_title_input:focus,
+.edit_category_input:focus,
+.edit_deadline_input:focus,
+.edit_status_input:focus {
+  outline: none;
+  border: 1px solid var(--navy);
+}
+
+.edit_button_area {
+  display: flex;
+  flex-flow: row;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.detail_save_btn,
+.detail_cancle_btn {
+  flex: 1;
+  padding: 0.2rem 1rem;
+  font-size: 16px;
   color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   background-color: #70b4e5;
   font-weight: bold;
   margin-top: 1rem;
+  border: 1px solid #2891db;
+  box-shadow: 0 0 3px rgba(42, 137, 210, 0.5);
+  text-shadow:
+    0.5px 0 #2891db,
+    -0.5px 0 #2891db,
+    0 0.5px #2891db,
+    0 -0.5px #2891db;
+}
+
+.detail_save_btn:hover,
+.detail_cancle_btn:hover {
+
+  background-color: #2497e9;
 }

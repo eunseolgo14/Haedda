@@ -7,14 +7,14 @@
     <title>My List</title>
 
     <!-- 공용 CSS -->
-    <link rel="stylesheet" href="../../Assets/Css/Common.css" />
+    <link rel="stylesheet" href="../../../Assets/Css/Common.css" />
 
     <!-- 페이지 전용 CSS -->
-    <link rel="stylesheet" href="MyList.css" />
-    <link rel="stylesheet" href="ListSidebar.css" />
+    <link rel="stylesheet" href="../CSS/MyList.css" />
+    <link rel="stylesheet" href="../CSS/ListSidebar.css" />
 
     <!-- 공용 JS -->
-    <script src="../../Assets/Scripts/Common.js"></script>
+    <script type="module" src="../../../Assets/JS/Common.js"></script>
 </head>
 
 <body>
@@ -37,17 +37,35 @@
                             <h2>NEW LIST<br>MAX LENGTH TWO</h2>
                         </div>
                         <div class="list_btn_controls">
-                            <select class="status_filter">
+                            <select class="status_filter" id="list_statue_select">
                                 <option>IN-PROGRESS</option>
                                 <option>DONE</option>
                                 <option>PASS</option>
                             </select>
+
                             <button class="list_star_btn">★</button>
-                            <button class="list_menu_btn">≡</button>
+
+                            <div class="list_menu_wrapper">
+                                <button class="list_menu_btn">≡</button>
+                                <ul class="list_menu_option hidden">
+                                    <li data-value="share">공유하기</li>
+                                    <div class="list_menu_divider"></div>
+                                    <li data-value="add">추가하기</li>
+                                    <div class="list_menu_divider"></div>
+                                    <li data-value="edit">수정하기</li>
+                                    <div class="list_menu_divider"></div>
+                                    <li data-value="delete">삭제하기</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="task-list scrollable_element"></div>
+                    <div class="task_list_wrapper">
+                        <div class="top_scroll_gradient"></div>
+
+                        <div class="task-list scrollable_element"></div>
+                        <div class="top_scroll_gradient"></div>
+                    </div>
                 </div>
 
                 <!-- 디테일 패널 -->
@@ -72,6 +90,7 @@
 
             </div>
 
+
             <!-- ✅ 팝업: 리스트 생성 -->
             <div class="popup create-list-popup hidden">
                 <h3>Your list name is...</h3>
@@ -79,25 +98,11 @@
                 <button class="btn create-list-btn">CREATE</button>
                 <button class="close-btn">×</button>
             </div>
-
-            <!-- ✅ 팝업: 태스크 추가 -->
-            <div class="popup add-task-popup hidden">
-                <h3>Add new task to <span class="list-name">New List</span></h3>
-                <textarea placeholder="Write your task here."></textarea>
-                <div class="task-meta">
-                    <div><b>Category:</b> <span>STUDY</span></div>
-                    <div><b>Deadline:</b> <span>NONE</span></div>
-                    <div><b>Status:</b> <span>TO DO</span></div>
-                </div>
-                <button class="btn add-task-btn">ADD</button>
-                <button class="close-btn">×</button>
-            </div>
-
         </div>
     </div>
 
     <!-- 페이지 전용 JS -->
-    <script type="module" src="MyList.js"></script>
+    <script type="module" src="../JS/MyList.js"></script>
 </body>
 
 </html>

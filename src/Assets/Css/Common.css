@@ -5,6 +5,7 @@
   --background: #fffef7;
   --white: #ffffff;
   --lyellow: #ffdcbe;
+  --lbeige: #91c1e4;
   --brown: #632306;
   --rbrown: #770501;
   --lbrown: #c26d44;
@@ -14,17 +15,47 @@
   --navy: #005393;
 }
 
-body {
+/* div {
+  outline: 1px solid rgb(2, 133, 48);
+} */
+
+#app {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 230px;
+  overflow: visible;
+  order: 0;
+  /* background-color: #fafafa;
+  border-right: 1px solid #ccc; */
+}
+
+#content {
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+  overflow-y: hidden;
+  min-width: 0;
+  min-height: 0;
+  order: 1;
+  /* 매우 중요 */
+}
+
+html,body {
   margin: 0;
   padding: 0;
   background-color: var(--background);
   font-family: 'Noto Sans KR', 'Nunito', 'Noto Sans KR', sans-serif;
   overflow: hidden;
   user-select: none;
+  height: 100%;
 }
 
 .scrollable_element {
-  height: 300px;
+  /* height: 300px; */
   overflow-y: auto;
   scrollbar-color: var(--scroll) transparent;
 }
@@ -58,7 +89,7 @@ textarea {
 }
 
 /* [MODAL_POPUP_CSS] */
-/* #region */ 
+/* #region */
 
 .modal_overlay {
   position: absolute;
@@ -89,7 +120,6 @@ textarea {
   font-size: 18px;
   margin: 0.7rem;
   color: var(--lbrown);
-  ;
 }
 
 .modal_window p {
@@ -105,6 +135,7 @@ textarea {
 }
 
 .confirm_btn,
+.add_task_confirm_btn,
 .cancel_btn {
   flex-grow: 1;
   padding: 0.6rem 0.8rem;
@@ -115,11 +146,12 @@ textarea {
   cursor: pointer;
   height: 40px;
   background-color: transparent;
-  color: var(--lbrown);;
+  color: var(--lbrown);
 }
 
 
 .confirm_btn:hover,
+.add_task_confirm_btn:hover,
 .cancel_btn:hover {
   font-weight: bold;
   text-decoration: underline;
@@ -153,3 +185,224 @@ textarea {
 }
 
 /* #endregion */
+/* 공용 팝업 css 종료. */
+
+/* 기능 팝업 css 시작. */
+/* #region */
+.add_task_header {
+  justify-self: center;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add_task_cancel_btn {
+  border: none;
+  background-color: transparent;
+  color: var(--lbrown);
+  font-size: 26px;
+}
+
+.add_task_desc {
+  width: 95%;
+  height: 100px;
+  border: 1px solid var(--lyellow);
+  color: var(--lbrown);
+  font-size: 12px;
+  margin-top: 0.5rem;
+}
+
+.add_task_title:focus {
+  outline: 1px solid var(--lbrown);
+}
+
+.add_task_desc:focus {
+  outline: 1px solid var(--lbrown);
+}
+
+.add_info_area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+}
+
+.add_task_input {
+  margin-top: 0.5rem;
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--lbrown);
+  font-size: 12px;
+}
+
+.description_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* textarea 수평 중앙 정렬 */
+  justify-content: flex-start;
+  /* 위에서부터 정렬 */
+}
+
+.description_box b {
+  align-self: flex-start;
+  /* b는 왼쪽 정렬 */
+}
+
+.add_task_input span {
+  font-size: 12px;
+  max-width: 70%;
+  text-align: left;
+}
+
+.add_task_category,
+.add_task_title {
+  border-radius: 5px;
+  border: 1px solid var(--lyellow);
+  color: var(--lbrown);
+}
+
+.add_task_category:focus,
+.add_task_title:focus {
+  outline: 1px solid var(--lbrown);
+}
+
+.add_task_color {
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+  height: 30px;
+  width: 40px;
+}
+
+.add_task_status {
+  color: var(--lbrown);
+  border: 1px solid var(--lyellow);
+  background-color: #ffffff;
+}
+
+.add_task_status:focus {
+  outline: 1px solid var(--lbrown);
+}
+
+/* ##endregion */
+/* 기능 팝업 css 종료. */
+
+input[type="checkbox"] {
+  border: none;
+  outline: none;
+  accent-color: var(--lbrown);
+}
+
+select {
+  padding: 0.2rem 0.5rem;
+  font-size: 10px;
+  line-height: 1;
+  vertical-align: middle;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background-color: #ffffff;
+  font-weight: bold;
+  appearance: none;
+}
+
+
+.checkered_row {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='12' viewBox='0 0 8 12'><rect width='4' height='12' fill='%23632306'/><rect x='4' width='4' height='12' fill='%23c26d44'/></svg>");
+  background-repeat: repeat-x;
+  height: 10px;
+  width: 100%;
+  border: 1px solid var(--brown);
+
+}
+
+/* 모바일 (핸드폰) */
+@media screen and (max-width: 599px) {
+ body {
+    background-color: pink;
+
+  }
+
+   html {
+    background-color: black;
+
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    background-color: blue;
+  }
+
+  #sidebar {
+    height: 75px;
+    width: 100%;
+    overflow: visible;
+    order: 1;
+    flex-shrink: 0;
+    background-color: green;
+  }
+
+  #content {
+    order: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    overflow-y: hidden;
+    min-height: 0;
+    /* 중요 */
+
+    background-color: red;
+  }
+
+}
+
+/* 태블릿 */
+@media screen and (min-width: 600px) and (max-width: 1023px) {
+
+  body {
+    background-color: pink;
+
+  }
+
+   html {
+    background-color: black;
+
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    background-color: blue;
+  }
+
+  #sidebar {
+    height: 75px;
+    width: 100%;
+    overflow: visible;
+    order: 1;
+    flex-shrink: 0;
+    background-color: green;
+  }
+
+  #content {
+    order: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    overflow-y: hidden;
+    min-height: 0;
+    /* 중요 */
+
+    background-color: red;
+  }
+}

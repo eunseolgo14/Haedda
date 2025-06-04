@@ -19,8 +19,9 @@ export const TaskData = [
         sort_order: 1,
         title: "1.집 가서 빨래 널기",
         category: "집안일",
+        tag_color: "#ffffff",
         description: "세탁기 돌린 빨래를 널자. 이렇게 미루다가는 걸칠 거적대기도 없는 암울한 미래가 나를 기다린다는 것을 명심하라.",
-        status: "IN PROGRESS",
+        status: "IN-PROGRESS",
         is_important: true,
         due_date: "2025-06-01",
         created_at: "2025-05-15",
@@ -36,8 +37,9 @@ export const TaskData = [
         sort_order: 2,
         title: "2.설거지 하기",
         category: "집안일",
+        tag_color: "#ffffff",
         description: "저녁 먹고 바로 설거지하자.",
-        status: "TO DO",
+        status: "DONE",
         is_important: false,
         due_date: "2025-06-01",
         created_at: "2025-05-15",
@@ -53,8 +55,9 @@ export const TaskData = [
         sort_order: 3,
         title: "3.설거지 하기",
         category: "집안일",
+        tag_color: "#ffffff",
         description: "저녁 먹고 바로 설거지하자.",
-        status: "TO DO",
+        status: "DONE",
         is_important: false,
         due_date: "2025-06-01",
         created_at: "2025-05-15",
@@ -70,8 +73,9 @@ export const TaskData = [
         sort_order: 4,
         title: "4.설거지 하기",
         category: "집안일",
+        tag_color: "#ffffff",
         description: "저녁 먹고 바로 설거지하자.",
-        status: "TO DO",
+        status: "PASS",
         is_important: false,
         due_date: "2025-06-01",
         created_at: "2025-05-15",
@@ -85,11 +89,13 @@ export const TaskData = [
 
 //#region [CRUD TASK]
 // Task 생성 함수.
-export function CreateTask({ todo_list_id, title, description = "", status = "idea", due_date = null }) {
+export function CreateTask({ todo_list_id, title, tag_color, category, description = "", status = "IDEA", due_date = null }) {
     const task = {
         id: Date.now(),
         todo_list_id,
         title,
+        tag_color,
+        category,
         description,
         status,
         due_date,
@@ -147,6 +153,10 @@ export function GetListById(listId) {
     return TodoListData.find(tl => tl.id === listId);
 }
 
+export function GetAllList() {
+    return TodoListData;
+}
+
 export function UpdateTodoList(listId, updates) {
     const list = TodoListData.find(l => l.id === listId);
     if (list) Object.assign(list, updates);
@@ -163,6 +173,13 @@ export function SaveDataToLocalStorage() {
 
 // 테스크 데이터, 리스트 데이터 로컬 스토리지 로드 함수.
 export function LoadDataFromLocalStorage() {
+
+    // localStorage.removeItem("TaskData");
+    // localStorage.removeItem("TodoListData");
+
+    if (localStorage.getItem("TaskData") == null && localStorage.getItem("TodoListData") == null) {
+        SaveDataToLocalStorage();
+    }
     const tasks = JSON.parse(localStorage.getItem("TaskData") || "[]");
     const lists = JSON.parse(localStorage.getItem("TodoListData") || "[]");
     TaskData.length = 0;
